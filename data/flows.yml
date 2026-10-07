@@ -1,8 +1,40 @@
 flows:
-  transfer_money:
-    description: Help users send money to friends and family.
+  greet_user:
+    description: "Greet the user"
+    run_pattern_completed: false
     steps:
-      - collect: recipient
-      - collect: amount
-        description: the number of US dollars to send
-      - action: utter_transfer_complete
+      - action: utter_greet
+
+  random_cat:
+    description: "Show a random cat"
+    run_pattern_completed: false
+    steps:
+      - action: action_get_random_cat
+
+  cat_by_breed:
+    description: "Show cat information by breed"
+    run_pattern_completed: false
+    steps:
+      - collect: cat_breed
+        description: "Breed name of the cat"
+      - action: action_get_cat_by_breed
+
+  favourite_cat:
+    description: "Add the last shown cat to favourites"
+    run_pattern_completed: false
+    steps:
+      - action: action_add_favourite
+
+  list_favourites:
+    description: "Show the list of favourite cats"
+    run_pattern_completed: false
+    steps:
+      - action: action_list_favourites
+
+  remove_favourite:
+    description: "Remove a cat from favourites"
+    run_pattern_completed: false
+    steps:
+      - collect: favourite_id
+        description: "ID of the favourite cat to remove"
+      - action: action_remove_favourite

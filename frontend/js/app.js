@@ -335,6 +335,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if response is an array (direct messages)
         if (Array.isArray(response)) {
             response.forEach(message => {
+                const imageUrl = (message.type === 'image' && message.url) || message.image;
+                if (imageUrl) {
+                    addImageMessageToChat(imageUrl, timestamp, message.text || 'Bot image');
+                    window.DB.saveConversation({
+                        sender: 'bot',
+                        message: imageUrl,
+                        context: conversationContext,
+                        timestamp: timestamp.toISOString()
+                    });
+                    return;
+                }
+
                 if (message.text) {
                     addMessageToChat('bot', message.text, timestamp);
 
@@ -353,6 +365,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle messages
         if (response.messages && response.messages.length > 0) {
             response.messages.forEach(message => {
+                const imageUrl = (message.type === 'image' && message.url) || message.image;
+                if (imageUrl) {
+                    addImageMessageToChat(imageUrl, timestamp, message.text || 'Bot image');
+                    window.DB.saveConversation({
+                        sender: 'bot',
+                        message: imageUrl,
+                        context: response.context || conversationContext,
+                        timestamp: timestamp.toISOString()
+                    });
+                    return;
+                }
+
                 if (message.text) {
                     addMessageToChat('bot', message.text, timestamp);
 
@@ -427,6 +451,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // If it's today, just show the time, otherwise show date and time
         return timestamp.toLocaleString(undefined, isToday ? timeOptions : dateTimeOptions);
+    }
+
+    /**
+     * Add an image message to the chat
+     */
+    function addImageMessageToChat(imageUrl, timestamp = new Date(), altText = 'Bot image') {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', 'bot-message');
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.classList.add('message-avatar');
+
+        const avatarIcon = document.createElement('i');
+        avatarIcon.classList.add('fa-solid', 'fa-robot');
+        avatarDiv.appendChild(avatarIcon);
+        messageDiv.appendChild(avatarDiv);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('message-content');
+
+        const imageContainer = document.createElement('div');
+        imageContainer.classList.add('message-image');
+
+        const image = document.createElement('img');
+        image.src = imageUrl;
+        image.alt = altText;
+        image.loading = 'lazy';
+        imageContainer.appendChild(image);
+
+        const timeDiv = document.createElement('div');
+        timeDiv.classList.add('message-time');
+        timeDiv.textContent = formatTimestamp(timestamp);
+
+        contentDiv.appendChild(imageContainer);
+        contentDiv.appendChild(timeDiv);
+        messageDiv.appendChild(contentDiv);
+
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
     }
 
     /**

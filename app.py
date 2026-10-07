@@ -90,16 +90,20 @@ def process_rasa_response(response, original_context):
         # Check for json_message format which is used by newer Rasa SDK
         if item.get("json_message"):
             json_data = item["json_message"]
-            
+
             # Extract action information
             if json_data.get("action"):
                 action = json_data["action"]
                 result["actions"].append(action)
-            
+
+            # Preserve image payloads from the bot response
+            if json_data.get("image"):
+                result["messages"].append({"type": "image", "url": json_data["image"]})
+
             # Update context with any new information
             if json_data.get("context"):
                 result["context"].update(json_data["context"])
-                
+
             # Continue processing other parts of the message
             continue
 
@@ -116,7 +120,10 @@ def process_rasa_response(response, original_context):
 
             if custom_data.get("action"):
                 result["actions"].append(custom_data["action"])
-                
+
+            if custom_data.get("image"):
+                result["messages"].append({"type": "image", "url": custom_data["image"]})
+
             if custom_data.get("context"):
                 result["context"].update(custom_data["context"])
 

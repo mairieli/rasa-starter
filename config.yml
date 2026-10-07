@@ -1,7 +1,7 @@
 recipe: default.v1
 language: en
 pipeline:
-- name: CompactLLMCommandGenerator
+- name: SingleStepLLMCommandGenerator
   llm:
     model_group: rasa_command_generation_model
   flow_retrieval:
@@ -9,5 +9,5 @@ pipeline:
 
 policies:
 - name: FlowPolicy
-#  - name: EnterpriseSearchPolicy
+- name: EnterpriseSearchPolicy
 assistant_id: 20250827-154803-coal-resin
